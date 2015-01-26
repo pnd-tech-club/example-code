@@ -1,4 +1,4 @@
-doubleMe x = x + x
+doubleOne x = x + x
 
-doubleUs x y = doubleMe x + doubleMe y
+doubleTwo x y = doubleOne x + doubleOne y
 
