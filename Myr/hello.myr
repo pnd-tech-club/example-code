@@ -1,0 +1,12 @@
+/* Excerpt from: http://eigenstate.org/myrddin/ */
+use std
+
+const main = {args : byte[:][:] /* a slice of byte slices */
+        var i                       /* the type is inferred */
+        std.put("Hello-世界\n")     /* prints to stdout */
+        for i = 0; i < args.len; i++
+                /* our format strings are not printf compatible, beware */
+                std.put("arg %i = %s\n", i, args[i])
+        ;;
+} 
+
