@@ -1,3 +1,5 @@
+# Conceived by Sean Hinchee
+
 def main()
 	print "What is your name?: "
 	$usrname = $stdin.gets.chomp

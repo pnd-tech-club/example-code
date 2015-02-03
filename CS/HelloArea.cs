@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Conceived by Chris Gutschlag
+using System;
 
 namespace Hello_World
 {

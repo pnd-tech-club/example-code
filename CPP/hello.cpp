@@ -1,3 +1,5 @@
+/* Conceived by Sean Hinchee */
+
 #include <iostream>
 
 int main()

@@ -1,3 +1,4 @@
+// Conceived by Sean Hinchee
 import java.util.Scanner;
 
 public class Hello 

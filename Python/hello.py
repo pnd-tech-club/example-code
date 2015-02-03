@@ -1,3 +1,4 @@
+# Conceived by Sean Hinchee
 usrname = input("What is your name?: ")
 print("Hello,", usrname, "!")
 

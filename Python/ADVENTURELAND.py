@@ -1,3 +1,5 @@
+# conceived by Nathan Simmons
+
 #todo - more interactive combat (rock/paper/scissors?)
 import random
 #for ease of prompting
