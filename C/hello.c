@@ -1,3 +1,4 @@
+/* Conceived by Sean Hinchee */
 #include <stdio.h>
 
 int main()

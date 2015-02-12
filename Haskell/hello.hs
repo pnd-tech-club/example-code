@@ -1,3 +1,5 @@
+-- Conceived by Sean Hinchee
+
 word :: String 
 word = "world"
 

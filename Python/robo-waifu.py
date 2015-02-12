@@ -1,3 +1,5 @@
+# conceived by Nathan Simmons
+
 #sets
 nouncheck = []
 verbcheck = []
