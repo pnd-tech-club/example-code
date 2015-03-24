@@ -368,7 +368,8 @@ while stop != 1:
 		print roominfo
 #North path split
 	elif x == 3 and y == 10 and z == 1:
-		roominfo = "
+		roominfo = "You barely see the lights from the stairs to the south."
+		print roominfo
 #This is used to undo movement into an unexisting room V
 	else:
 		if act == "n":
