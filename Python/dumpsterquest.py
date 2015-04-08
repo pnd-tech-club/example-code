@@ -56,17 +56,30 @@
 # -Added some other minor things
 # -Fixed some bugs
 
+#Version 0.2.1
+# -Fixed dodging
+# -Added more rooms
+# -Added better formatting for some stuff
+# -Removed junk
+
+#Version 0.2.5 (Semi-major update)
+# -Reworked inventory system to allow item removal
+# -Changed some other minor things
+# -Condensed some code
+# -Threw out some junk
+#Laid out groundwork for better things and stuff
+
 import random
 print "Welcome to Dumpster Quest!  For help tpye \"help\"!"
-current_version = "v0.2.0"
+current_version = "v0.2.5"
 global weapon
 weapon = 0
 #Weapon list: 0 = hands, 1 = stick, 2 = dagger, 3 = dull sword, 4 = Blade Staff, 5 = sharp spear, 6 = polished axe, 7 = The Blade of Trash
 global armor
 armor = 0
 #Armor list: 0 = Cloth shirt, 1 = Leather Breastplate, 2 = Chainmail Breastplate, 3 = Scale Breastplate, 4 = 
-global dodged
-dodged = 0
+global dodges
+dodges = 0
 global dodge_dam
 dodge_dam = 1
 global damage
@@ -74,10 +87,9 @@ damage = 3
 global max_hp
 max_hp = 20
 #Note to add all needed triggers after here
+triggers = ""
 global torch_true
 torch_true = 0
-global rock_true
-rock_true = 0
 global lights_true
 lights_true = 0
 global branch_true
@@ -90,7 +102,7 @@ letter_true = 0
 #global timeask
 #timeask = ""
 global inventory
-inventory = ""
+inventory = []
 global stop
 stop = 0
 global letter
@@ -123,7 +135,7 @@ global enemy_info
 enemy_info = ""
 global enemy_type
 global fight_p
-fight_p = enemy_info + "What do you want to do?\n 1: Attack\n2: Items\n3: Magic\n4: Run Away"
+fight_p = enemy_info + "What do you want to do?\n1: Attack\n2: Items\n3: Magic\n4: Run Away"
 global f_act
 global hp
 hp = 20
@@ -154,9 +166,9 @@ while stop != 1:
 		x += 1
 	elif act == "w":
 		x -= 1
-	elif act == "down":
+	elif act == "d":
 		z += 1
-	elif act == "up":
+	elif act == "u":
 		z -= 1
 #Debugging command
 	if act == "num":
@@ -172,43 +184,48 @@ while stop != 1:
 	if "take" in words:
 		if "torch" in words and x == 0 and y == 0 and torch_true == 0:
 			items = "torch"
-			inventory = inventory + "\n" + items
+			inventory.append(items)
 			torch_true = 1
 			print "You pick up the torch and are able to see better."
 		elif "branch" in words and x == 2 and y == 1 and branch_true == 0:
 			items = "branch"
-			inventory = inventory + "\n" + items
+			inventory.append(items)
 			branch_true = 1
 			print "You pick up the branch and hold it like a spear."
 		elif "letter" in words and x == 2 and y == 6 and letter_true == 0:
 			items = "letter"
-			inventory = inventory + "\n" + items
+			inventory.append(items)
 			letter_true = 1
 			print "You take the letter out of the mailbox."
 			print letter
 		elif "dagger" in words and x == 3 and y == 7 and z == 1 and weapon < 2:
 			items = "dagger"
-			inventory = inventory + "\n" + items
+			inventory.append(items)
 			weapon = 2
 			print "You weild the dagger and feel stronger."
 		elif "armor" in words and x == 3 and y == 7 and z == 1 and armor < 1:
 			items = "leather armor"
-			inventory = inventory + "\n" + items
+			inventory.append(items)
 			armor = 1
 			print "You put on the leather armor."
 		elif "lamp" in words and x == 3 and y == 7 and z == 1 and "lamp" not in inventory:
 			items = "lamp"
-			inventory = inventory + "\n" + items
+			inventory.append(items)
 			lamp_true = 1
+			items = "torch"
+			inventory.remove(items)
 			print "Your torch happens to burn out as you pick up the lamp."
+		elif "armor" in words and x == -1 and y == 15 and z == 1 and armor <= 1:
+			items = "Chainmail armor"
+			inventory.append(items)
+			armor = 2
+			print "You put on the chainmail armor."
 		else:
 			print "You don't see that here."
 		encounter_time += 1
 	if act == "inv":
 		if lamp_true == 0:
-			print inventory
-		elif lamp_true == 1:
-			print inventory
+			print (inventory)
 		encounter_time += 1
 	if act == "look":
 		skip = 0
@@ -355,20 +372,76 @@ while stop != 1:
 		encounter = 0
 		enemy_type = "orc"
 		roominfo = "As you walk, an ominous presence overwhelms you."
-	elif x == 3 and y == 9 and z == 1:
-		encounter = 1
-		print "There are paths to the north, east, and west."
-#West path split
-	elif x == 2 and y == 9 and z == 1:
-		roominfo = "You hear dripping water in the distance."
 		print roominfo
+	elif x == 3 and y == 9 and z == 1 and "westpath" not in triggers and "eastpath" not in triggers:
+		encounter = 1
+		enemy_type = "orc"
+		print "There are paths to the north, east, and west."
+	elif x == 3 and y == 9 and z == 1 and "westpath" not in triggers and "eastpath" in triggers:
+		encounter = 1
+		enemy_type = "orc"
+		print "There are paths to the north and west."
+	elif x == 3 and y == 9 and z == 1 and "westpath" in triggers and "eastpath" not in triggers:
+		encounter = 1
+		enemy_type ="orc"
+		print "There are paths to the north and east."
+	elif x == 3 and y == 9 and z == 1 and "westpath" in triggers and "eastpath" in triggers:
+		encounter = 1
+		enemy_type = "orc"
+		print "There is a path to the north."
+#West path split
+	elif x == 2 and y == 9 and z == 1 and "westpath" not in triggers:
+		roominfo = "You hear dripping water in the distance.  There is a path to the east and west"
+		print roominfo
+		triggers += "westpath"+"\n"
+	elif x == 1 and y == 9 and z == 1:
+		roominfo = "The strange dripping sound seems a short distance away.  There is a path to the north and east."
+		print roominfo
+	elif x == 1 and y == 10 and z == 1:
+		roominfo = "The dripping sound appears to be just around the corner up ahead.  You hear a deep moaning sound.  There is a path to the west and south."
+		print roominfo
+	elif x == 0 and y == 10 and z == 1:
+		roominfo = "The dripping sound is very audible now and the moaning sound seems to be rapidly increasing in volume.  There are paths to the west and east."
+		print roominfo
+	elif x == -1 and y == 10 and z == 1:
+		enemy_type = "wraith"
+		roominfo = "You notice a rapidly dripping spot on the ceiling.  You can hear the moaning sound ahead.  There is a path to the east and north."
+		print roominfo
+	elif x == -1 and y == 11 and z == 1:
+		roominfo = "As you look north, you can't see the end of the passage.  There is a path to the south and north."
+		print roominfo
+	elif x == -1 and y == 12 and z == 1:
+		roominfo = "Something seems off around you..."
+		print roominfo
+	elif x == -1 and y == 13 and z == 1:
+		roominfo = "You think you can see a light to the north."
+		print roominfo
+	elif x == -1 and y == 14 and z == 1:
+		roominfo = "The light to the north grows in brightness."
+		print roominfo
+	elif x == -1 and y == 15 and z == 1 and armor <= 1:
+		roominfo = "You almost trip on the chainmail armor that lays on the ground."
+		print roominfo
+	elif x == -1 and y == 15 and z == 1 and armor >= 2:
+		roominfo = "The silence here is intense.  The light ahead seems to be getting brighter."
+		print roominfo
+	elif x == -1 and y == 16 and z == 1:
+		roominfo = "The light to the north appears to be a wall of solid light."
+		print roominfo
+	elif x == -1 and y == 17 and z == 1:
+		roominfo = "You feel yourself being whisped away to somewhere else."
+		print roominfo
+		x = 3
+		y = 9
+		z = 1
 #East path split
-	elif x == 4 and y == 9 and z == 1:
+	elif x == 4 and y == 9 and z == 1 and "eastpath" not in triggers:
 		roominfo = "There is a slight clanking noise in the distance."
 		print roominfo
+		triggers += "eastpath"
 #North path split
 	elif x == 3 and y == 10 and z == 1:
-		roominfo = "You barely see the lights from the stairs to the south."
+		roominfo = "All you see to the north is darkness."
 		print roominfo
 #This is used to undo movement into an unexisting room V
 	else:
@@ -380,9 +453,9 @@ while stop != 1:
 			x += 1
 		elif act == "e":
 			x -= 1
-		elif act == "down":
+		elif act == "d":
 			z -= 1
-		elif act == "up":
+		elif act == "u":
 			z += 1
 	if encounter != 0:
 		encounter_time -= 1
@@ -463,23 +536,33 @@ while stop != 1:
 				enemy_dodge = 0
 			elif enemy_type == "orc":
 				enemy_hp = 25
-				enemy_dam = random.randint(4, 6)
-				enemy_dodge = 0
+				enemy_dam = random.randint(6, 8)
+				enemy_dodge = 1
+			elif enemy_type == "wraith":
+				enemy_hp = 30
+				enemy_dam = random.randint(7, 9)
+				enemy_dodge = 3
+			elif enemy_type == "dwarf":
+				enemy_hp = 35
+				enemy_dam = random.randint(8, 11)
+				enemy_dodge = 1
 #Remember to fix this silly grammar thingy here
 			enemy_info = "A "+enemy_type+" suddenly appears!."
 			print enemy_info
 			enemy_set = 1
 		act_f = raw_input(fight_p + "\n")
+		dodges = 0
 		if act_f == "1":
 			enemy_hp = enemy_hp - damage
 			print "You dealt %d damage to the %r!" % (damage, enemy_type)
 		elif act_f == "2":
 			print inventory
-#		elif act_f == "3":
-#			dodge_dam = enemy_dam * random.randint(0, 1)
-#			hp = hp - dodge_dam
-#			if dodge_dam == 0:
-#				print "You dodged the attack!"
+		elif act_f == "3":
+			dodge_dam = enemy_dam * random.randint(0, 1)
+			hp = hp - dodge_dam
+			if dodge_dam == 0:
+				print "You dodged the attack!"
+				dodges = 1
 		elif act_f == "4":
 			run_success = random.randint(0, 3)
 			if run_success == 1:
@@ -488,13 +571,17 @@ while stop != 1:
 				print "You ran away!"
 		else:
 			print "You can't do that!"
-		if enemy_hp > 0: #and dodge_dam != 0:
+		if enemy_hp > 0 and dodges == 0:
 			hp = hp - enemy_dam + defe
 			print "The "+enemy_type+" dealt %r damage to you!" % enemy_dam
 			if enemy_type == "wolf":
 				enemy_dam = random.randint(1, 3)
 			elif enemy_type == "orc":
-				enemy_dam = random.randint(4, 6)
+				enemy_dam = random.randint(6, 8)
+			elif enemy_type == "wraith":
+				enemy_dam = random.randint(7, 9)
+			elif enemy_type == "dwarf":
+				enemy_dam = random.randint(8, 11)
 		if enemy_hp <= 0 and act_f != "4":
 			enemy_set = 0
 			print "You killed the " + enemy_type +"!"
